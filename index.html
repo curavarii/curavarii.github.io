@@ -1,539 +1,278 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>采儀的個人網頁</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>采儀的個人頁面</title>
 
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- 字體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-  <!-- jQuery CDN -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- Three.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.156.0/build/three.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-  <style>
-    /* ---------- 色系（馬卡龍、粉白） ---------- */
-    :root{
-      --bg:#FBF8F9;            /* 主要背景：粉白 */
-      --soft-pink:#F7DCE8;    /* 溫柔粉（主色） */
-      --mint:#CFF6E4;          /* 馬卡龍薄荷 */
-      --sky:#D7F0FF;           /* 馬卡龍淺藍 */
-      --card:#FFFFFF;          /* 卡片白 */
-      --muted:#7E7E88;         /* 次要文字 */
-      --accent:#E8C7D6;        /* 輔助粉 */
-      --glass: rgba(255,255,255,0.6);
-    }
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-    *{box-sizing:border-box}
-    html,body{
-      height:100%;
-      margin:0;
-      font-family: "Noto Sans TC", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: linear-gradient(180deg,var(--bg),#FFF);
-      color:#222;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      scroll-behavior: smooth;
-    }
+    <style>
+        body {
+            margin: 0;
+            font-family: "Noto Sans TC", sans-serif;
+            background-color: #fffafc;
+            color: #444;
+        }
 
-    /* ---------- navbar ---------- */
-    .navbar{
-      position:fixed;
-      top:12px;
-      left:50%;
-      transform:translateX(-50%);
-      z-index:50;
-      background: linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0.6));
-      backdrop-filter: blur(6px);
-      border-radius:999px;
-      padding:6px 12px;
-      box-shadow:0 6px 18px rgba(20,20,30,0.06);
-      display:flex;
-      gap:8px;
-      align-items:center;
-    }
-    .nav-btn{
-      border:none;
-      background:transparent;
-      padding:8px 14px;
-      border-radius:999px;
-      font-weight:500;
-      cursor:pointer;
-      color:var(--muted);
-      transition: all .18s ease;
-    }
-    .nav-btn:hover{ color:#333; transform:translateY(-2px); box-shadow:0 6px 14px rgba(0,0,0,0.06);}
-    .nav-btn.active{
-      background: linear-gradient(90deg,var(--soft-pink),var(--mint));
-      color:white;
-      box-shadow:0 10px 24px rgba(200,150,180,0.12);
-    }
+        /* 導覽列 */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 240, 245, 0.9);
+            backdrop-filter: blur(6px);
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            z-index: 100;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
 
-    /* ---------- hero ---------- */
-    header.hero{
-      min-height:60vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      position:relative;
-      overflow:hidden;
-      padding:28px 16px;
-    }
-    .hero-inner{
-      position:relative;
-      z-index:5;
-      max-width:1100px;
-      width:100%;
-      display:flex;
-      gap:28px;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .hero-card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75));
-      border-radius:18px;
-      padding:28px;
-      box-shadow:0 8px 30px rgba(120,100,130,0.06);
-      width:60%;
-      min-width:260px;
-    }
-    .hero-title{ font-size:28px; margin:0 0 6px; letter-spacing:0.2px; }
-    .hero-sub{ margin:0; color:var(--muted); }
+        nav a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            font-size: 16px;
+            transition: 0.2s;
+        }
 
-    .hero-aside{
-      width:36%;
-      min-width:220px;
-      border-radius:14px;
-      padding:18px;
-      background: linear-gradient(180deg,var(--sky), rgba(255,255,255,0.5));
-      box-shadow:0 6px 20px rgba(80,120,160,0.04);
-    }
-    .pill{
-      display:inline-block;
-      background:var(--glass);
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:14px;
-      color:#444;
-    }
+        nav a:hover {
+            color: #ff8bb2;
+        }
 
-    /* ---------- sections ---------- */
-    main{ padding:40px 18px 120px; max-width:1100px; margin:0 auto; }
-    section{ margin:44px 0; opacity:0; transform: translateY(18px); transition: all .6s cubic-bezier(.2,.8,.2,1); }
-    section.visible{ opacity:1; transform: translateY(0); }
+        /* Hero 區 */
+        #hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
 
-    .section-title{
-      display:flex; align-items:center; gap:12px;
-      margin-bottom:18px;
-    }
-    .section-title h2{ margin:0; font-size:20px; color:#333; }
-    .section-title p{ margin:0; color:var(--muted); font-size:13px; }
+        #hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #d87393;
+            margin-bottom: 10px;
+        }
 
-    /* cards */
-    .cards{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:16px; }
-    .card{
-      background:var(--card);
-      border-radius:12px;
-      padding:18px;
-      box-shadow: 0 6px 18px rgba(20,20,30,0.04);
-      transition: transform .22s ease, box-shadow .22s ease;
-      border: 1px solid rgba(0,0,0,0.03);
-    }
-    .card:hover{ transform: translateY(-8px); box-shadow: 0 18px 40px rgba(60,40,50,0.06); }
+        #hero p {
+            font-size: 20px;
+            width: 70%;
+            max-width: 600px;
+            color: #666;
+        }
 
-    .muted{ color:var(--muted); font-size:14px; }
+        /* 粒子背景 canvas */
+        #bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
 
-    /* timeline */
-    .timeline{ display:flex; flex-direction:column; gap:12px; }
-    .timeline .item{ display:flex; gap:12px; align-items:flex-start; }
-    .dot{
-      min-width:10px; min-height:10px; border-radius:50%;
-      background: linear-gradient(180deg,var(--soft-pink),var(--mint));
-      box-shadow:0 6px 14px rgba(200,150,180,0.08);
-    }
+        /* 區塊設定 */
+        section {
+            width: 80%;
+            max-width: 850px;
+            margin: 120px auto;
+            padding: 40px;
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            transition: 0.4s;
+            opacity: 0;
+            transform: translateY(40px);
+        }
 
-    /* progress bars */
-    .progress{ background: rgba(0,0,0,0.06); height:12px; border-radius:999px; overflow:hidden; }
-    .progress > i{ display:block; height:100%; width:0%; border-radius:999px; background: linear-gradient(90deg,var(--mint),var(--soft-pink)); transition: width .9s ease; }
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-    /* footer */
-    footer{
-      margin-top:40px;
-      padding:30px 18px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.9));
-      border-radius:14px;
-      box-shadow:0 8px 30px rgba(20,20,30,0.03);
-    }
-    footer .small{ color:var(--muted); font-size:14px; }
+        h2 {
+            color: #d87393;
+            margin-bottom: 20px;
+        }
 
-    /* 回到頂部按鈕 */
-    .to-top{
-      position:fixed;
-      right:20px;
-      bottom:20px;
-      background: linear-gradient(180deg,var(--soft-pink),var(--mint));
-      border-radius:50%;
-      width:46px; height:46px;
-      display:flex; align-items:center; justify-content:center;
-      box-shadow:0 12px 30px rgba(150,100,140,0.12);
-      cursor:pointer; z-index:60;
-      border:none;
-    }
+        .card-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+        }
 
-    /* responsive */
-    @media (max-width:880px){
-      .hero-inner{ flex-direction:column; gap:16px; align-items:flex-start; }
-      .hero-card{ width:100% }
-      .hero-aside{ width:100% }
-      .navbar{ left:12px; transform:translateX(0); }
-    }
-  </style>
+        .card {
+            background: #fff0f5;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            transition: 0.25s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 60px;
+            color: #999;
+        }
+
+        /* 回到上方 */
+        #topBtn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #ffd7e0;
+            padding: 12px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 3px 9px rgba(0,0,0,0.15);
+            transition: 0.2s;
+        }
+
+        #topBtn:hover {
+            background: #ffbfcf;
+        }
+    </style>
 </head>
+
 <body>
 
-  <!-- ---------- navbar ---------- -->
-  <nav class="navbar" role="navigation" aria-label="主要導覽">
-    <button class="nav-btn active" data-target="#home">首頁</button>
-    <button class="nav-btn" data-target="#about">關於我</button>
-    <button class="nav-btn" data-target="#interests">興趣</button>
-    <button class="nav-btn" data-target="#goals">人生目標</button>
-    <button class="nav-btn" data-target="#plan">未來規劃</button>
-  </nav>
+<nav>
+    <a href="#hero">首頁</a>
+    <a href="#about">關於我</a>
+    <a href="#interests">興趣</a>
+    <a href="#goals">人生目標</a>
+    <a href="#future">未來規劃</a>
+</nav>
 
-  <!-- ---------- Hero + Three.js canvas ---------- -->
-  <header class="hero" id="home" aria-labelledby="hero-title">
-    <!-- three.js canvas will be appended here -->
-    <canvas id="bg-canvas" style="position:absolute; inset:0; z-index:1;"></canvas>
+<!-- Hero 區 -->
+<div id="hero">
+    <canvas id="bg"></canvas>
+    <h1>采儀</h1>
+    <p>軟爛大學生，在世界努力升級中。</p>
+</div>
 
-    <div class="hero-inner">
-      <div class="hero-card" role="region" aria-label="自我介紹">
-        <h1 class="hero-title" id="hero-title">軟爛大學生，在世界努力升級中</h1>
-        <p class="hero-sub">會察言觀色、內向但會努力社交。喜歡動漫、小說與追星，從喜歡的事物裡得到前進的力量。</p>
-        <div style="height:12px"></div>
-        <span class="pill">馬卡龍 / 粉白 / 溫柔感</span>
-      </div>
+<!-- About Me -->
+<section id="about">
+    <h2>關於我</h2>
+    <p>
+        我的個性算是內向，也會努力察言觀色去維持好的氛圍。  
+        雖然害羞，但我也會努力社交，讓自己一步步變得更勇敢。  
+        喜歡動漫與小說，常常能從故事裡看到現實的影子；  
+        也喜歡追星，看著他們努力的樣子，會讓我也想更認真生活。
+    </p>
+</section>
 
-      <aside class="hero-aside" role="complementary" aria-label="快速資訊">
-        <p style="margin:0 0 8px; font-weight:600;">快速資訊</p>
-        <p class="muted" style="margin:0 0 12px;">性格：內向、會察言觀色、努力社交</p>
-
-        <p style="margin:0 0 8px; font-weight:600;">最愛</p>
-        <p class="muted" style="margin:0">動漫、小說、追星（從中得到動力）</p>
-      </aside>
+<!-- Interests -->
+<section id="interests">
+    <h2>興趣列表</h2>
+    <div class="card-list">
+        <div class="card">動漫 / 小說</div>
+        <div class="card">追星 & 舞台表演</div>
+        <div class="card">哲學 & 邏輯思考</div>
+        <div class="card">未來投資理財</div>
     </div>
-  </header>
+</section>
 
-  <!-- ---------- main content ---------- -->
-  <main>
+<!-- Goals -->
+<section id="goals">
+    <h2>人生目標</h2>
+    <ul>
+        <li>研究投資理財，朝財富自由邁進</li>
+        <li>保持運動與健康飲食習慣</li>
+        <li>提升邏輯思考與自我表達能力</li>
+        <li>在生活中找到屬於自己的幸福</li>
+    </ul>
+</section>
 
-    <!-- About -->
-    <section id="about">
-      <div class="section-title">
-        <h2>關於我</h2>
-        <p class="muted">認識真實的我</p>
-      </div>
-      <div class="card">
-        <h3 style="margin-top:0">自我介紹</h3>
-        <p class="muted">軟爛大學生，在世界努力升級中。雖然內向但會觀察並努力與人互動，希望透過學習與練習變成更好的自己。</p>
-        <div style="height:12px"></div>
-        <p style="margin:0; font-weight:600">性格</p>
-        <p class="muted">會察言觀色、內向但持續練習社交與表達。</p>
-      </div>
-    </section>
+<!-- Future Plan -->
+<section id="future">
+    <h2>未來規劃</h2>
+    <ul>
+        <li>尋找能力與期望都契合的職涯方向</li>
+        <li>嘗試跨領域技能，讓未來選擇更多</li>
+        <li>學習財務知識，建立穩定的資產管理習慣</li>
+        <li>成為能依自己方式生活的人</li>
+    </ul>
+</section>
 
-    <!-- Interests -->
-    <section id="interests">
-      <div class="section-title">
-        <h2>興趣</h2>
-        <p class="muted">讓我快樂也讓我成長的事情</p>
-      </div>
+<footer>
+    © 2025 采儀｜個人學習網頁示範
+</footer>
 
-      <div class="cards">
-        <div class="card">
-          <h4 style="margin:0 0 8px">動漫</h4>
-          <p class="muted">從劇情與角色得到共鳴與情感的練習。</p>
-        </div>
+<div id="topBtn">▲</div>
 
-        <div class="card">
-          <h4 style="margin:0 0 8px">小說</h4>
-          <p class="muted">喜歡透過小說理解社會、探索人性與情感。</p>
-        </div>
-
-        <div class="card">
-          <h4 style="margin:0 0 8px">追星</h4>
-          <p class="muted">看著喜歡的人努力，也讓我更想努力生活與進步。</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Goals -->
-    <section id="goals">
-      <div class="section-title">
-        <h2>人生目標</h2>
-        <p class="muted">長期努力的方向</p>
-      </div>
-
-      <div class="cards">
-        <div class="card">
-          <h4 style="margin:0 0 8px">研究投資理財</h4>
-          <p class="muted">學習理財觀念與投資策略，朝早日財務自由努力。</p>
-        </div>
-
-        <div class="card">
-          <h4 style="margin:0 0 8px">維持運動與健康飲食</h4>
-          <p class="muted">以可持續的小步驟建立長期習慣。</p>
-        </div>
-
-        <div class="card">
-          <h4 style="margin:0 0 8px">練習邏輯思考與表達</h4>
-          <p class="muted">透過閱讀與練習呈現更清楚的自我。</p>
-        </div>
-
-        <div class="card">
-          <h4 style="margin:0 0 8px">尋找生活中的幸福</h4>
-          <p class="muted">重視小而確幸，並在忙碌中找到安定感。</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Future Plan -->
-    <section id="plan">
-      <div class="section-title">
-        <h2>未來規劃</h2>
-        <p class="muted">短期與長期的行動計畫</p>
-      </div>
-
-      <div class="card">
-        <h3 style="margin-top:0">短期（1 年內）</h3>
-        <ul class="muted">
-          <li>持續學習投資理財基礎（閱讀 / 小額實作）</li>
-          <li>建立每週固定運動（跳繩 / 居家訓練）</li>
-          <li>練習寫作與口頭表達（做筆記與簡短報告）</li>
-        </ul>
-      </div>
-
-      <div style="height:12px"></div>
-
-      <div class="card">
-        <h3 style="margin-top:0">中長期（3-5 年）</h3>
-        <p class="muted">職涯規劃與更長遠的目標構想：</p>
-        <div style="height:12px"></div>
-        <div class="timeline">
-          <div class="item">
-            <div class="dot" aria-hidden="true"></div>
-            <div>
-              <p style="margin:0; font-weight:600">職涯目標方向一 — 資料 / 分析相關</p>
-              <p class="muted">如果你對邏輯與數據有興趣，可以朝資料分析、數據工程或金融相關分析師方向發展。</p>
-            </div>
-          </div>
-
-          <div class="item">
-            <div class="dot" aria-hidden="true"></div>
-            <div>
-              <p style="margin:0; font-weight:600">職涯目標方向二 — 產品 / 企劃</p>
-              <p class="muted">若偏向溝通與呈現，可往產品企劃或內容編輯方向，結合你對文化作品的敏感度。</p>
-            </div>
-          </div>
-
-          <div class="item">
-            <div class="dot" aria-hidden="true"></div>
-            <div>
-              <p style="margin:0; font-weight:600">長遠目標 — 金融自主</p>
-              <p class="muted">建立穩定收入與被動收入來源，最終達成財務自由的生活選擇權。</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div style="height:18px"></div>
-
-      <div class="card">
-        <h3 style="margin-top:0">進度顯示</h3>
-        <p class="muted">以下為示意進度，可在實際使用時動態更新</p>
-        <div style="height:12px"></div>
-        <div style="margin-bottom:8px">
-          <div class="muted">投資學習</div>
-          <div class="progress"><i data-percent="40"></i></div>
-        </div>
-        <div style="margin-bottom:8px">
-          <div class="muted">運動習慣</div>
-          <div class="progress"><i data-percent="25"></i></div>
-        </div>
-        <div style="margin-bottom:8px">
-          <div class="muted">表達訓練</div>
-          <div class="progress"><i data-percent="30"></i></div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- footer -->
-  <footer>
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
-      <div>
-        <p style="margin:0; font-weight:600">聯絡我</p>
-        <p class="small" style="margin:6px 0 0">GitHub：<span style="font-weight:700">你的GitHub連結</span>（請記得更新）</p>
-      </div>
-      <div class="small">© 2025 采儀。設計｜粉白馬卡龍風 • Three.js 粒子點綴</div>
-    </div>
-  </footer>
-
-  <!-- 回到頂部 -->
-  <button class="to-top" aria-label="回到頂部" title="回到頂部">▲</button>
-
-  <!-- ---------- JS: jQuery effects, progress bars, smooth nav ---------- -->
-  <script>
-    $(function(){
-      // navbar smooth scroll (also update active)
-      $('.nav-btn').on('click', function(){
-        var target = $($(this).attr('data-target'));
-        if(target.length){
-          // scroll to target minus some offset
-          $('html,body').animate({scrollTop: target.offset().top - 18}, 600);
-        }
-      });
-
-      // set active nav based on scroll
-      var sections = ['#home','#about','#interests','#goals','#plan'];
-      function updateActive(){
-        var pos = $(window).scrollTop() + 80;
-        var activeSet = sections[0];
-        sections.forEach(function(s){
-          if($(s).offset() && $(s).offset().top <= pos) activeSet = s;
-        });
-        $('.nav-btn').removeClass('active');
-        $('.nav-btn[data-target="'+activeSet+'"]').addClass('active');
-      }
-      updateActive();
-      $(window).on('scroll resize', updateActive);
-
-      // scroll fade-in: reveal sections when in viewport
-      function reveal(){
-        $('section').each(function(){
-          var top = $(this).offset().top;
-          var win = $(window).scrollTop() + $(window).height() * 0.85;
-          if(win > top){
-            $(this).addClass('visible');
-          }
-        });
-      }
-      reveal();
-      $(window).on('scroll resize', reveal);
-
-      // progress bars animate
-      $('.progress i').each(function(){
-        var pct = $(this).data('percent') || 0;
-        var el = $(this);
-        setTimeout(function(){
-          el.css('width', pct + '%');
-        }, 400);
-      });
-
-      // back to top
-      $('.to-top').on('click', function(){ $('html,body').animate({scrollTop:0},500); });
-
-      // small accessibility: allow keyboard nav on nav buttons
-      $('.nav-btn').attr('tabindex',0).on('keypress', function(e){ if(e.key==='Enter') $(this).click(); });
+<!-- jQuery 特效 -->
+<script>
+    // 導覽列滑動
+    $("nav a").click(function(e){
+        e.preventDefault();
+        let target = $(this).attr("href");
+        $("html, body").animate({
+            scrollTop: $(target).offset().top - 60
+        }, 600);
     });
-  </script>
 
-  <!-- ---------- JS: Three.js - subtle particle background ---------- -->
-  <script>
-    (function(){
-      const canvas = document.getElementById('bg-canvas');
-      if(!canvas) return;
+    // 區塊淡入
+    $(window).on("scroll", function(){
+        $("section").each(function(){
+            let top = $(this).offset().top;
+            if($(window).scrollTop() + window.innerHeight > top + 80){
+                $(this).addClass("visible");
+            }
+        });
+    });
 
-      // renderer
-      const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha:true, antialias:true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setClearColor(0x000000,0); // transparent
+    // 回到上方
+    $("#topBtn").click(() => $("html, body").animate({scrollTop:0}, 600));
 
-      // scene + camera
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 60;
+    // THREE.JS 粒子背景
+    let scene = new THREE.Scene();
+    let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    let renderer = new THREE.WebGLRenderer({canvas: document.getElementById("bg"), alpha:true});
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
-      // particles geometry
-      const count = 220;
-      const geometry = new THREE.BufferGeometry();
-      const positions = new Float32Array(count * 3);
-      const sizes = new Float32Array(count);
+    let particles = new THREE.BufferGeometry();
+    let count = 500;
+    let posArray = new Float32Array(count * 3);
 
-      for(let i=0;i<count;i++){
-        const i3 = i * 3;
-        // spread in an ellipsoid
-        positions[i3 + 0] = (Math.random() - 0.5) * 120; // x
-        positions[i3 + 1] = (Math.random() - 0.5) * 60;  // y
-        positions[i3 + 2] = (Math.random() - 0.5) * 40;  // z
-        sizes[i] = 6 + Math.random() * 8;
-      }
-      geometry.setAttribute('position', new THREE.BufferAttribute(positions,3));
-      geometry.setAttribute('size', new THREE.BufferAttribute(sizes,1));
+    for (let i = 0; i < count * 3; i++){
+        posArray[i] = (Math.random() - 0.5) * 8;
+    }
 
-      // color palette: soft pastel points
-      const colors = [];
-      for(let i=0;i<count;i++){
-        // choose among three soft colors
-        const palette = [
-          [247/255,220/255,232/255], // soft pink
-          [207/255,246/255,228/255], // mint
-          [215/255,240/255,1]        // sky
-        ];
-        const c = palette[Math.floor(Math.random()*palette.length)];
-        colors.push(c[0], c[1], c[2]);
-      }
-      geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors,3));
+    particles.setAttribute("position", new THREE.BufferAttribute(posArray, 3));
+    let material = new THREE.PointsMaterial({ size: 0.05, color: 0xffaacd });
+    let points = new THREE.Points(particles, material);
+    scene.add(points);
 
-      // material for points
-      const material = new THREE.PointsMaterial({
-        size: 6,
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.9,
-        depthWrite: false
-      });
+    camera.position.z = 3;
 
-      const points = new THREE.Points(geometry, material);
-      scene.add(points);
-
-      // subtle animation loop
-      let t = 0;
-      function animate(){
-        t += 0.002;
-        // slow, subtle rotation & bob
-        points.rotation.y = Math.sin(t * 0.6) * 0.08;
-        points.rotation.x = Math.sin(t * 0.4) * 0.03;
-        points.position.y = Math.sin(t * 0.8) * 2;
-
-        renderer.render(scene, camera);
+    function animate(){
         requestAnimationFrame(animate);
-      }
-      animate();
+        points.rotation.y += 0.0008;
+        renderer.render(scene, camera);
+    }
+    animate();
+</script>
 
-      // resize handling
-      window.addEventListener('resize', ()=>{
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-      });
-
-      // reduce intensity on small screens (avoid perf issues)
-      function adjustForSmall(){
-        if(window.innerWidth < 600){
-          points.material.opacity = 0.6;
-          points.scale.set(0.8,0.8,0.8);
-        } else {
-          points.material.opacity = 0.95;
-          points.scale.set(1,1,1);
-        }
-      }
-      adjustForSmall();
-      window.addEventListener('resize', adjustForSmall);
-    })();
-  </script>
 </body>
 </html>
